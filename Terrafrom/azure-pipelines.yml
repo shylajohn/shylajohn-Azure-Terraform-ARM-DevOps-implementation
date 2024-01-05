@@ -1,0 +1,35 @@
+trigger:
+  branches:
+    include:
+    - main
+stages:
+- stage: __default
+  jobs:
+  - job: Job
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: CmdLine@2
+      displayName: 'Run a one-line script'
+      inputs:
+        script: echo Hello, world!
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'Azure Pass - Sponsorship(71c927f3-bdc9-4789-b586-c625545d20e3)'
+        backendAzureRmResourceGroupName: 'lab-rg'
+        backendAzureRmStorageAccountName: 'labsadevops'
+        backendAzureRmContainerName: 'cont1'
+        backendAzureRmKey: '/tf/terraform.tfstate'
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        environmentServiceNameAzureRM: 'Azure Pass - Sponsorship(71c927f3-bdc9-4789-b586-c625545d20e3)'
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        environmentServiceNameAzureRM: 'Azure Pass - Sponsorship(71c927f3-bdc9-4789-b586-c625545d20e3)'
+
